@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
 """
 main.py — AI Resume Screening MAS Entry Point
-Run: python main.py
+Run: python3 main.py
 """
 import logging
 from pathlib import Path
