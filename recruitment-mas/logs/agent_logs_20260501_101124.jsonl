@@ -1,0 +1,8 @@
+{"timestamp": "2026-05-01T09:55:12.961608", "agent": "JDAnalyst", "event": "start", "data": {"jd_chars": 1858}}
+{"timestamp": "2026-05-01T10:00:16.957689", "agent": "JDAnalyst", "event": "complete", "data": {"skills_found": ["Python 3.10+", "FastAPI", "Django", "PostgreSQL", "Docker", "Git"]}}
+{"timestamp": "2026-05-01T10:00:16.962272", "agent": "CVScreener", "event": "start", "data": {"folder": "data/cvs"}}
+{"timestamp": "2026-05-01T10:06:47.002116", "agent": "CVScreener", "event": "parsed_cv", "data": {"file": "D:\\Y4S1\\Current Trendsin Software Engineering\\CTSE assignment 2\\resume-screening-system\\recruitment-mas\\data\\cvs\\kavya_nair.txt", "name": "Kavya Nair"}}
+{"timestamp": "2026-05-01T10:06:47.004012", "agent": "Scorer", "event": "start", "data": {"candidates": 1}}
+{"timestamp": "2026-05-01T10:07:34.105736", "agent": "Scorer", "event": "scored", "data": {"name": "Kavya Nair", "score": 91}}
+{"timestamp": "2026-05-01T10:07:34.614118", "agent": "ReportWriter", "event": "start", "data": {"top_candidate": "Kavya Nair"}}
+{"timestamp": "2026-05-01T10:11:24.256598", "agent": "ReportWriter", "event": "complete", "data": {"path": "D:\\Y4S1\\Current Trendsin Software Engineering\\CTSE assignment 2\\resume-screening-system\\recruitment-mas\\outputs\\report_20260501_154124.md", "chars": 1619}}
