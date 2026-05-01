@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 from langchain.tools import tool
+from utils.terminal import C, c
 
 logger = logging.getLogger(__name__)
 
@@ -84,16 +85,17 @@ def get_jd_from_user() -> str:
         > Required: Python, FastAPI
         > END
     """
-    print("\n" + "=" * 50)
-    print("PASTE YOUR JOB DESCRIPTION BELOW")
-    print("   Type or paste the JD, then type END on a")
-    print("   new line alone and press Enter to finish.")
-    print("=" * 50)
+    print()
+    print(c("  " + "╔" + "═" * 52 + "╗", C.BLUE))
+    print(c("  ║", C.BLUE) + c("   PASTE JOB DESCRIPTION", C.WHITE, C.BOLD) + " " * 29 + c("║", C.BLUE))
+    print(c("  ║", C.BLUE) + c("   Type below. Type ", C.GREY) + c("END", C.YELLOW, C.BOLD) + c(" on a new line to finish.", C.GREY) + " " * 6 + c("║", C.BLUE))
+    print(c("  ╚" + "═" * 52 + "╝", C.BLUE))
+    print()
 
     lines = []
     while True:
         try:
-            line = input("> ")
+            line = input(c("  > ", C.CYAN))
         except EOFError:
             break
         if line.strip().upper() == "END":
