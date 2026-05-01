@@ -6,6 +6,7 @@ experience level, education, and nice-to-have qualifications.
 
 import json
 import logging
+import re
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
@@ -40,7 +41,7 @@ OUTPUT FORMAT (strict):
   "domain": "string (e.g. Software Engineering, Finance)"
 }"""
 
-_FALLBACK = {
+FALLBACK_REQUIREMENTS: dict = {
     "job_title": "Unknown",
     "required_skills": [],
     "nice_to_have": [],
@@ -49,6 +50,27 @@ _FALLBACK = {
     "responsibilities": [],
     "domain": "Unknown",
 }
+
+
+def _extract_json(raw: str) -> str:
+    """Robustly extract a JSON string from LLM output.
+
+    Handles: plain JSON, ```json fences, ``` fences, leading/trailing text.
+
+    Args:
+        raw: Raw string output from the LLM.
+
+    Returns:
+        Cleaned string ready for json.loads().
+    """
+    # Strip markdown fences first
+    if "```" in raw:
+        raw = re.sub(r"```(?:json)?", "", raw).strip()
+    # If there's a JSON object anywhere in the string, extract it
+    match = re.search(r"\{.*\}", raw, re.DOTALL)
+    if match:
+        return match.group(0)
+    return raw
 
 
 def jd_analyst_node(state: RecruitmentState) -> dict:
@@ -72,21 +94,32 @@ def jd_analyst_node(state: RecruitmentState) -> dict:
     response = llm.invoke(messages)
     raw = response.content.strip()
 
-    if raw.startswith("```"):
-        lines = raw.splitlines()
-        if lines[0].strip().startswith("```"):
-            lines = lines[1:]
-        if lines and lines[-1].strip().startswith("```"):
-            lines = lines[:-1]
-        raw = "\n".join(lines).strip()
-        if raw.lower().startswith("json"):
-            raw = raw[4:].strip()
+    raw = _extract_json(raw)
 
     try:
         requirements = json.loads(raw)
     except json.JSONDecodeError:
         logger.error("JSONDecodeError parsing LLM response: %s", raw[:200])
-        return {"job_requirements": _FALLBACK}
+        log_event(state, "JDAnalyst", "error", {"reason": "json_parse_failed", "raw_preview": raw[:200]})
+        requirements = FALLBACK_REQUIREMENTS.copy()
+
+    # Enforce list types — small LLMs sometimes return a string instead of a list
+    for list_field in ("required_skills", "nice_to_have", "responsibilities"):
+        val = requirements.get(list_field)
+        if not isinstance(val, list):
+            requirements[list_field] = [val] if isinstance(val, str) and val else []
+
+    # Enforce int or None for experience
+    exp = requirements.get("min_experience_years")
+    if exp is not None:
+        try:
+            requirements["min_experience_years"] = int(exp)
+        except (ValueError, TypeError):
+            requirements["min_experience_years"] = None
+
+    # Fill any keys the LLM forgot to include
+    for key, default in FALLBACK_REQUIREMENTS.items():
+        requirements.setdefault(key, default)
 
     logger.info(
         "JD Analyst extracted %d required skills",

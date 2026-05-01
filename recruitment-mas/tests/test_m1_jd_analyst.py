@@ -2,8 +2,11 @@
 
 import pytest
 
-from agents.jd_analyst import jd_analyst_node
+from agents.jd_analyst import FALLBACK_REQUIREMENTS, jd_analyst_node
 from tools.jd_tools import read_jd_file
+
+from hypothesis import given, settings, assume
+from hypothesis import strategies as st
 
 SAMPLE_JD = (
     "Senior Python Developer needed. Required: Python, SQL, Docker. "
@@ -70,3 +73,95 @@ def test_jd_analyst_no_hallucination():
     skills = [s.lower() for s in result["job_requirements"]["required_skills"]]
     assert "python" not in skills
     assert "java" not in skills
+
+
+# --- Property-based tests (Hypothesis) ---
+
+
+@given(st.text(min_size=20, max_size=500))
+@settings(max_examples=15)
+def test_jd_analyst_never_crashes(random_text):
+    """Agent must return a valid dict for ANY text input — the fallback must always activate on garbage."""
+    import unittest.mock as mock
+
+    with mock.patch("agents.jd_analyst.ChatOllama") as MockLLM:
+        MockLLM.return_value.invoke.return_value.content = random_text
+        state = {"job_description": "dummy jd text here", "agent_logs": []}
+        result = jd_analyst_node(state)
+    assert isinstance(result, dict)
+    assert "job_requirements" in result
+    assert isinstance(result["job_requirements"], dict)
+    assert "required_skills" in result["job_requirements"]
+
+
+@given(st.text(min_size=20, max_size=300))
+@settings(max_examples=10)
+def test_required_skills_always_list(random_text):
+    """required_skills must be a list type regardless of LLM output — fallback enforces this."""
+    import unittest.mock as mock
+
+    with mock.patch("agents.jd_analyst.ChatOllama") as MockLLM:
+        MockLLM.return_value.invoke.return_value.content = random_text
+        state = {"job_description": "dummy jd text here", "agent_logs": []}
+        result = jd_analyst_node(state)
+    assert isinstance(result["job_requirements"]["required_skills"], list)
+
+
+@given(st.text(min_size=30, max_size=400))
+@settings(max_examples=10)
+def test_output_always_has_all_keys(random_text):
+    """Output schema must be complete — all 7 keys must exist even when LLM fails and fallback fires."""
+    import unittest.mock as mock
+
+    with mock.patch("agents.jd_analyst.ChatOllama") as MockLLM:
+        MockLLM.return_value.invoke.return_value.content = random_text
+        state = {"job_description": "dummy jd text here", "agent_logs": []}
+        result = jd_analyst_node(state)
+    req = result["job_requirements"]
+    expected_keys = {
+        "job_title",
+        "required_skills",
+        "nice_to_have",
+        "min_experience_years",
+        "education_level",
+        "responsibilities",
+        "domain",
+    }
+    assert expected_keys.issubset(set(req.keys()))
+
+
+# --- Mock-based unit tests for improvements ---
+
+
+def test_type_enforcement_skills_string_becomes_list():
+    """If LLM somehow returns required_skills as a plain string, agent must coerce it to a list."""
+    import unittest.mock as mock
+
+    broken_output = '{"job_title":"Dev","required_skills":"Python","nice_to_have":[],"min_experience_years":3,"education_level":"Bachelor","responsibilities":[],"domain":"Tech"}'
+    with mock.patch("agents.jd_analyst.ChatOllama") as MockLLM:
+        MockLLM.return_value.invoke.return_value.content = broken_output
+        state = {"job_description": "dummy jd text here for testing", "agent_logs": []}
+        result = jd_analyst_node(state)
+    assert isinstance(result["job_requirements"]["required_skills"], list)
+
+
+def test_fallback_on_invalid_json():
+    """When LLM returns unparseable output, fallback must return all 7 keys."""
+    import unittest.mock as mock
+
+    with mock.patch("agents.jd_analyst.ChatOllama") as MockLLM:
+        MockLLM.return_value.invoke.return_value.content = "Sorry, I cannot help with that."
+        state = {"job_description": "dummy jd text here for testing", "agent_logs": []}
+        result = jd_analyst_node(state)
+    reqs = result["job_requirements"]
+    for key in [
+        "job_title",
+        "required_skills",
+        "nice_to_have",
+        "min_experience_years",
+        "education_level",
+        "responsibilities",
+        "domain",
+    ]:
+        assert key in reqs, f"Fallback missing key: {key}"
+    assert isinstance(reqs["required_skills"], list)
