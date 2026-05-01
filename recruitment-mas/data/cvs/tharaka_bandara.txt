@@ -1,0 +1,40 @@
+Tharaka Bandara
+tharaka.bandara@gmail.com
++94 77 111 2233
+
+OBJECTIVE
+Recent graduate eager to begin my software development career. Passionate about
+coding and willing to learn any technology required by the role.
+
+EDUCATION
+HND Information Technology — SLIIT, Colombo (2023)
+Diploma in Web Design — ESOFT Metro Campus (2021)
+
+TECHNICAL SKILLS
+- Java, C++, PHP
+- HTML, CSS, Bootstrap, jQuery
+- MySQL
+- WordPress, cPanel
+- Basic Android development (Java)
+
+INTERNSHIP EXPERIENCE
+
+Web Development Intern — Creative Digital Agency, Colombo (Jun 2023 – Dec 2023)
+  - Built and customised WordPress websites for small business clients
+  - Designed landing pages using HTML, CSS, and Bootstrap
+  - Managed cPanel hosting and basic MySQL databases
+
+PERSONAL PROJECTS
+Online Quiz App (PHP + MySQL)
+  - Built a simple quiz platform for university friends using PHP and MySQL
+  - Hosted on shared cPanel hosting
+
+Portfolio Website
+  - Personal static website built with HTML and CSS
+
+EXTRA-CURRICULAR
+- Member of SLIIT Coding Club
+- Participated in university-level hackathon (2022)
+
+REFERENCES
+Available upon request
