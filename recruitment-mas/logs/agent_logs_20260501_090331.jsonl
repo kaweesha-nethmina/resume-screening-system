@@ -1,0 +1,4 @@
+{"timestamp": "2026-05-01T09:00:19.440563", "agent": "JDAnalyst", "event": "start", "data": {"jd_chars": 1858}}
+{"timestamp": "2026-05-01T09:01:10.640259", "agent": "JDAnalyst", "event": "complete", "data": {"skills_found": ["Python 3.10+", "FastAPI", "Django", "PostgreSQL", "Docker", "Git"]}}
+{"timestamp": "2026-05-01T09:01:10.642208", "agent": "CVScreener", "event": "start", "data": {"folder": "data/cvs"}}
+{"timestamp": "2026-05-01T09:03:31.835900", "agent": "CVScreener", "event": "parsed_cv", "data": {"file": "D:\\Y4S1\\CTSE\\resume-screening-system\\recruitment-mas\\data\\cvs\\kavya_nair.txt", "name": "Kavya Nair"}}
