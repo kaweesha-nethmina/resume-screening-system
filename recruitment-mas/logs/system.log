@@ -1,0 +1,5 @@
+2026-05-01 14:28:39,223 [agents.jd_analyst] ERROR: JSONDecodeError parsing LLM response: {
+  "job_title": "Senior Python Backend Developer",
+  "required_skills": ["Python 3.10+", "FastAPI", "Django", "PostgreSQL", "Docker", "Git"],
+  "nice_to_have": ["Redis", "Kubernetes", "AWS", "Kafka",
+2026-05-01 14:28:40,199 [agents.cv_screener] ERROR: Failed to get CV files: No CV files found in folder: data/cvs

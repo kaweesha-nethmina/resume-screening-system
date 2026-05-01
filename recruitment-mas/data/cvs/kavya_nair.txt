@@ -1,0 +1,51 @@
+Kavya Nair
+Email: kavya.nair@gmail.com | Phone: +94 71 234 5678
+LinkedIn: linkedin.com/in/kavyanair | GitHub: github.com/kavyanair
+
+PROFESSIONAL SUMMARY
+Senior Python Backend Developer with 6 years of experience building high-throughput
+financial systems and REST APIs. Deep expertise in FastAPI, PostgreSQL, and Docker.
+Proven track record of designing microservices that handle millions of transactions daily.
+
+TECHNICAL SKILLS
+Languages    : Python 3.10+, SQL, Bash
+Frameworks   : FastAPI, Django REST Framework, Celery, SQLAlchemy
+Databases    : PostgreSQL, Redis, MongoDB
+DevOps       : Docker, Docker Compose, Kubernetes, GitHub Actions, Jenkins
+Cloud        : AWS (EC2, S3, RDS, Lambda), Azure (basics)
+Tools        : Git, Postman, pgAdmin, Grafana, Prometheus
+
+PROFESSIONAL EXPERIENCE
+
+Senior Backend Developer — FinVault Technologies, Colombo (2021 – Present)
+  - Architected FastAPI microservices processing 2M+ financial transactions per day
+  - Designed PostgreSQL schemas with partitioning; reduced query time by 55%
+  - Led migration from monolith to Docker + Kubernetes on AWS ECS
+  - Implemented Redis caching layer that cut API response time from 400ms to 40ms
+  - Mentored 3 junior developers and conducted weekly code reviews
+
+Backend Developer — PayGate Lanka, Colombo (2019 – 2021)
+  - Built Django REST Framework APIs for a digital wallet serving 80,000 users
+  - Integrated AWS S3 for document storage and RDS PostgreSQL for persistence
+  - Set up CI/CD pipeline using GitHub Actions; reduced deployment time by 70%
+  - Wrote unit and integration tests achieving 90% code coverage
+
+Junior Python Developer — CloudSoft Pvt Ltd, Colombo (2018 – 2019)
+  - Developed internal tooling scripts in Python for data pipeline automation
+  - Maintained legacy Django applications and wrote database migration scripts
+
+EDUCATION
+BSc (Hons) Software Engineering — University of Moratuwa (2018)
+GPA: 3.8 / 4.0
+
+CERTIFICATIONS
+- AWS Certified Developer – Associate (2022)
+- Docker Certified Associate (2023)
+- PostgreSQL Administration – Udemy (2021)
+
+PROJECTS
+TxnGuard — Real-time fraud detection API (FastAPI + Redis + PostgreSQL)
+  Open source side project; 400+ GitHub stars
+
+LANGUAGES
+English (Fluent), Sinhala (Native), Tamil (Conversational)
