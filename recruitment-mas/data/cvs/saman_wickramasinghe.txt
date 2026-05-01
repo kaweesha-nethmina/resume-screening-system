@@ -1,0 +1,39 @@
+Saman Wickramasinghe
+Email: saman.wick@yahoo.com | Phone: +94 76 987 6543
+
+ABOUT ME
+Python developer with 4 years of experience in web application development.
+Comfortable with Django and basic REST API design. Looking to grow into a
+senior role in a fast-paced environment.
+
+SKILLS
+- Python, Django, Flask
+- MySQL, PostgreSQL (basic)
+- HTML, CSS, JavaScript
+- Git, Linux, basic Docker
+- Unit testing with pytest
+
+WORK HISTORY
+
+Software Developer — Sysco LABS, Colombo (2022 – Present)
+  - Built and maintained Django-based internal inventory management system
+  - Wrote REST APIs using Django REST Framework consumed by a React frontend
+  - Managed MySQL database schemas and wrote raw SQL queries for reporting
+  - Containerised the application using Docker for local development
+
+Associate Developer — Infomate Holdings, Colombo (2020 – 2022)
+  - Developed Python scripts for automating data extraction from Excel reports
+  - Assisted senior developers in maintaining a legacy PHP + Python hybrid system
+  - Wrote basic pytest unit tests for data processing functions
+
+EDUCATION
+BSc Computer Science — University of Kelaniya (2020)
+
+CERTIFICATIONS
+- Python for Everybody — Coursera (2019)
+
+ADDITIONAL INFORMATION
+- Familiar with Agile/Scrum methodology
+- Basic knowledge of AWS (EC2, S3) from personal projects
+- No experience with Kubernetes or Redis in production
+- Interested in learning FastAPI and microservices architecture
