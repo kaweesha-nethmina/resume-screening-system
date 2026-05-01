@@ -1,0 +1,14 @@
+{"timestamp": "2026-05-01T15:36:34.286373", "agent": "JDAnalyst", "event": "start", "data": {"jd_chars": 1858}}
+{"timestamp": "2026-05-01T15:36:45.407171", "agent": "JDAnalyst", "event": "complete", "data": {"skills_found": ["Python 3.10+", "FastAPI", "Django", "PostgreSQL", "Docker", "Git"]}}
+{"timestamp": "2026-05-01T15:36:45.410507", "agent": "CVScreener", "event": "start", "data": {"folder": "data/cvs"}}
+{"timestamp": "2026-05-01T15:37:00.963213", "agent": "CVScreener", "event": "parsed_cv", "data": {"file": "/Volumes/My Data/SLIIT/Y4S1/CTSE/Assignment 2/resume-screening-system/recruitment-mas/data/cvs/kavya_nair.txt", "name": "Kavya Nair"}}
+{"timestamp": "2026-05-01T15:37:14.492915", "agent": "CVScreener", "event": "parsed_cv", "data": {"file": "/Volumes/My Data/SLIIT/Y4S1/CTSE/Assignment 2/resume-screening-system/recruitment-mas/data/cvs/priya_rajagopal.txt", "name": "Dr. Priya Rajagopal"}}
+{"timestamp": "2026-05-01T15:37:23.375251", "agent": "CVScreener", "event": "parsed_cv", "data": {"file": "/Volumes/My Data/SLIIT/Y4S1/CTSE/Assignment 2/resume-screening-system/recruitment-mas/data/cvs/saman_wickramasinghe.txt", "name": "Saman Wickramasinghe"}}
+{"timestamp": "2026-05-01T15:37:31.070475", "agent": "CVScreener", "event": "parsed_cv", "data": {"file": "/Volumes/My Data/SLIIT/Y4S1/CTSE/Assignment 2/resume-screening-system/recruitment-mas/data/cvs/tharaka_bandara.txt", "name": "Tharaka Bandara"}}
+{"timestamp": "2026-05-01T15:37:31.076746", "agent": "Scorer", "event": "start", "data": {"candidates": 4}}
+{"timestamp": "2026-05-01T15:37:33.897736", "agent": "Scorer", "event": "scored", "data": {"name": "Kavya Nair", "score": 91}}
+{"timestamp": "2026-05-01T15:37:36.140990", "agent": "Scorer", "event": "scored", "data": {"name": "Dr. Priya Rajagopal", "score": 75}}
+{"timestamp": "2026-05-01T15:37:38.235798", "agent": "Scorer", "event": "scored", "data": {"name": "Saman Wickramasinghe", "score": 83}}
+{"timestamp": "2026-05-01T15:37:40.299889", "agent": "Scorer", "event": "scored", "data": {"name": "Tharaka Bandara", "score": 0}}
+{"timestamp": "2026-05-01T15:37:40.312575", "agent": "ReportWriter", "event": "start", "data": {"top_candidate": "Kavya Nair"}}
+{"timestamp": "2026-05-01T15:38:21.653501", "agent": "ReportWriter", "event": "complete", "data": {"path": "/Volumes/My Data/SLIIT/Y4S1/CTSE/Assignment 2/resume-screening-system/recruitment-mas/outputs/report_20260501_210821.md", "chars": 3162}}

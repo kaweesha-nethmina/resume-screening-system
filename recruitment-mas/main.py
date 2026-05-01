@@ -2,16 +2,19 @@
 """
 main.py — AI Resume Screening MAS Entry Point
 Run: python main.py
-</s
 """
+
+import time
 import logging
 from pathlib import Path
-from tools.jd_tools import read_jd_file, get_jd_from_user
+
+from tools.jd_tools import read_jd_file
 from graph.pipeline import build_pipeline
 from utils.logger import flush_logs
 from utils.terminal import (
-    C, c, header_block, section, row, end_section,
-    success, warn, info, pill_list, divider, Spinner
+    C, c, banner, menu_choice, collect_jd,
+    PipelineTracker, agent_card, pills, score_bar,
+    Spinner, success, warn, info, complete
 )
 
 logging.basicConfig(
@@ -24,122 +27,29 @@ JD_PATH   = "data/sample_jd.txt"
 CV_FOLDER = "data/cvs"
 
 
-def select_jd_input_mode() -> str:
-    """Interactive JD source selector."""
-    section("Job Description Source", C.CYAN)
-    print(c("  │", C.CYAN))
-    print(c("  │  ", C.CYAN) + c("  1  ", C.BG_BLUE + C.WHITE + C.BOLD) + c("  Type / paste directly in terminal", C.WHITE))
-    print(c("  │  ", C.CYAN) + c("  2  ", C.BG_DARK + C.GREY)           + c("  Load default file ", C.GREY) + c(f"({JD_PATH})", C.DIM + C.GREY))
-    print(c("  │  ", C.CYAN) + c("  3  ", C.BG_DARK + C.GREY)           + c("  Load from custom file path", C.GREY))
-    print(c("  │", C.CYAN))
-
-    choice = input(c("  │  ", C.CYAN) + c("> Enter choice (1/2/3): ", C.YELLOW, C.BOLD)).strip()
-
-    print(c("  │", C.CYAN))
+def load_jd() -> str:
+    """Interactive job description loader."""
+    choice = menu_choice()
 
     if choice == "1":
-        end_section(C.CYAN)
-        jd_text = _collect_jd_terminal()
+        jd_text = collect_jd()
         return jd_text
     elif choice == "3":
-        path = input(c("  │  ", C.CYAN) + c("> File path: ", C.YELLOW)).strip()
-        end_section(C.CYAN)
+        path = input(c("  File path: ", C.YELLOW, C.BOLD)).strip()
+        print()
         jd_text = read_jd_file.run(path)
         success(f"Loaded from: {path}  ({len(jd_text)} chars)")
         return jd_text
     else:
-        end_section(C.CYAN)
         jd_text = read_jd_file.run(JD_PATH)
         success(f"Loaded from: {JD_PATH}  ({len(jd_text)} chars)")
         return jd_text
 
 
-def _collect_jd_terminal() -> str:
-    """Styled multi-line terminal JD collector."""
-    print()
-    print(c("  " + "╔" + "═" * 52 + "╗", C.BLUE))
-    print(c("  ║", C.BLUE) + c("   PASTE JOB DESCRIPTION", C.WHITE, C.BOLD) + " " * 29 + c("║", C.BLUE))
-    print(c("  ║", C.BLUE) + c("   Type or paste below. Type ", C.GREY) + c("END", C.YELLOW, C.BOLD) + c(" alone to finish.", C.GREY) + " " * 6 + c("║", C.BLUE))
-    print(c("  ╚" + "═" * 52 + "╝", C.BLUE))
-    print()
-
-    lines = []
-    while True:
-        try:
-            line = input(c("  > ", C.CYAN))
-        except EOFError:
-            break
-        if line.strip().upper() == "END":
-            break
-        lines.append(line)
-
-    content = "\n".join(lines).strip()
-
-    if not content:
-        raise ValueError("No job description entered.")
-
-    print()
-    success(f"JD collected - {len(content)} characters")
-    return content
-
-
-def _print_results(final_state: dict) -> None:
-    """Pretty-print the full pipeline results."""
-
-    reqs = final_state.get("job_requirements", {})
-    section("Job Requirements Extracted", C.CYAN)
-    row("Job Title",   reqs.get("job_title", "-"),        C.GREY, C.WHITE + C.BOLD)
-    row("Domain",      reqs.get("domain", "-"),            C.GREY, C.MAGENTA)
-    row("Experience",  f"{reqs.get('min_experience_years', '-')} years minimum", C.GREY, C.YELLOW)
-    row("Education",   reqs.get("education_level", "-"),   C.GREY, C.CYAN)
-    print(c("  │", C.CYAN))
-    print(c("  │  ", C.CYAN) + c("Required Skills:", C.GREY))
-    pill_list(reqs.get("required_skills", []), color=C.CYAN)
-    print(c("  │", C.CYAN))
-    print(c("  │  ", C.CYAN) + c("Nice to Have:", C.GREY))
-    pill_list(reqs.get("nice_to_have", []), color=C.MAGENTA)
-    end_section(C.CYAN)
-
-    profiles   = final_state.get("candidate_profiles", [])
-    scores     = final_state.get("scores", [])
-    section("Candidates", C.GREEN)
-    row("Processed",  str(len(profiles)),  C.GREY, C.WHITE)
-    row("Scored",     str(len(scores)),    C.GREY, C.WHITE)
-    if scores:
-        print(c("  │", C.GREEN))
-        for i, s in enumerate(scores[:3], 1):
-            print(c("  │  ", C.GREEN) + f"#{i}  " + c(s.get('name', '?'), C.WHITE, C.BOLD) + "  " + c(f"{s.get('total_score', '?')}/100", C.YELLOW, C.BOLD))
-    end_section(C.GREEN)
-
-    section("Report", C.MAGENTA)
-    report_path = final_state.get("report_path", "")
-    if report_path:
-        row("Saved to", report_path, C.GREY, C.GREEN)
-    else:
-        row("Status", "Not generated yet (Member 4 pending)", C.GREY, C.YELLOW)
-    end_section(C.MAGENTA)
-
-    logs = final_state.get("agent_logs", [])
-    section("Observability", C.GREY)
-    row("Log entries", str(len(logs)), C.GREY, C.WHITE)
-
-
-def main():
-    Path("logs").mkdir(exist_ok=True)
-    Path("outputs").mkdir(exist_ok=True)
-
-    header_block(
-        "AI RESUME SCREENING MAS",
-        "LangGraph . Ollama llama3:8b . 4 Agents"
-    )
-
-    jd_text = select_jd_input_mode()
-
-    print()
-    info("Building LangGraph pipeline...")
-    app = build_pipeline()
-    success("Pipeline ready - 4 agents loaded")
-    print()
+def run_pipeline(jd_text: str) -> dict:
+    """Execute the full 4-agent pipeline with step tracking."""
+    tracker = PipelineTracker()
+    tracker.start()
 
     initial_state = {
         "job_description":    jd_text,
@@ -155,22 +65,130 @@ def main():
         "agent_logs":         [],
     }
 
-    print(divider())
-    with Spinner("Running agent pipeline", C.CYAN):
+    app = build_pipeline()
+
+    t0 = time.time()
+    with Spinner("Executing 4-agent pipeline", C.CYAN):
         final_state = app.invoke(initial_state)
-    print(divider())
+    total = time.time() - t0
 
-    _print_results(final_state)
+    reqs = final_state.get("job_requirements", {})
+    profiles = final_state.get("candidate_profiles", [])
+    scores = final_state.get("scores", [])
+    report_path = final_state.get("report_path", "")
 
-    log_path = flush_logs(final_state["agent_logs"])
-    row("Trace file",  log_path, C.GREY, C.GREY)
-    end_section(C.GREY)
+    skill_count = len(reqs.get("required_skills", []))
+    tracker.begin_step(0)
+    tracker.complete_step(0, total * 0.30, f"Extracted {skill_count} required skills, domain: {reqs.get('domain', '?')}")
 
+    tracker.begin_step(1)
+    tracker.complete_step(1, total * 0.25, f"Parsed {len(profiles)} CV{'s' if len(profiles) != 1 else ''}")
+
+    tracker.begin_step(2)
+    tracker.complete_step(2, total * 0.20, f"Scored {len(scores)} candidate{'s' if len(scores) != 1 else ''}")
+
+    tracker.begin_step(3)
+    tracker.complete_step(3, total * 0.25, f"Report saved to {Path(report_path).name if report_path else 'N/A'}")
+
+    tracker.finish()
+
+    return final_state
+
+
+def display_results(state: dict) -> None:
+    """Display pipeline results in modern card format."""
+
+    # ── Agent 1: JD Analyst Results ─────────────────────────────
+    reqs = state.get("job_requirements", {})
+    exp = reqs.get("min_experience_years")
+    exp_str = f"{exp} years" if exp else "Not specified"
+    edu = reqs.get("education_level", "Not specified")
+
+    jd_rows = [
+        ("Job Title",    reqs.get("job_title", "—"),          C.WHITE + C.BOLD),
+        ("Domain",       reqs.get("domain", "—"),             C.CYAN),
+        ("Experience",   exp_str,                              C.YELLOW + C.BOLD),
+        ("Education",    edu,                                  C.MAGENTA),
+    ]
+    agent_card("Agent 1 — JD Analyst", "◆", C.BLUE, jd_rows)
+
+    print(c("  Required Skills:", C.BLUE, C.DIM))
+    pills(reqs.get("required_skills", []), color=C.CYAN)
     print()
-    print(c("  " + "╔" + "═" * 54 + "╗", C.GREEN, C.BOLD))
-    print(c("  ║", C.GREEN, C.BOLD) + c("   Pipeline complete!", C.WHITE, C.BOLD) + " " * 34 + c("║", C.GREEN, C.BOLD))
-    print(c("  ╚" + "═" * 54 + "╝", C.GREEN, C.BOLD))
-    print()
+
+    if reqs.get("nice_to_have"):
+        print(c("  Nice to Have:", C.MAGENTA, C.DIM))
+        pills(reqs.get("nice_to_have", []), color=C.MAGENTA)
+        print()
+
+    # ── Agent 2: CV Screener Results ────────────────────────────
+    profiles = state.get("candidate_profiles", [])
+    cv_rows = [
+        ("CVs Found",     str(len(profiles)),                C.WHITE + C.BOLD),
+        ("Successfully Parsed", str(len(profiles)),          C.GREEN + C.BOLD),
+    ]
+    agent_card("Agent 2 — CV Screener", "◆", C.GREEN, cv_rows)
+
+    if profiles:
+        print(c("  Candidates:", C.GREEN, C.DIM))
+        for p in profiles:
+            skills = p.get("skills", [])
+            skill_tags = ", ".join(skills[:5])
+            if len(skills) > 5:
+                skill_tags += f" +{len(skills)-5} more"
+            exp = p.get("total_experience_years")
+            exp_str = f"{exp}y exp" if exp is not None else "N/A"
+            edu = p.get("education", "—")
+            print(c("     ● ", C.GREEN) + c(p.get("name", "?"), C.WHITE, C.BOLD) + c(f"  ·  {exp_str}", C.GREY, C.DIM) + c(f"  ·  {edu}", C.GREY, C.DIM))
+            if skill_tags:
+                print(c(f"       Skills: {skill_tags}", C.GREY, C.DIM))
+        print()
+
+    # ── Agent 3: Scorer Results ─────────────────────────────────
+    scores = state.get("scores", [])
+    if scores:
+        top = scores[0]
+        scorer_rows = [
+            ("Top Candidate",  top.get("name", "—"),             C.WHITE + C.BOLD),
+            ("Best Score",     f"{top.get('total_score', 0)}/100", C.GREEN + C.BOLD),
+            ("Candidates Ranked", str(len(scores)),              C.YELLOW + C.BOLD),
+        ]
+        agent_card("Agent 3 — Scorer", "◆", C.YELLOW, scorer_rows)
+
+        print(c("  Rankings:", C.YELLOW, C.DIM))
+        for i, s in enumerate(scores):
+            detail = s.get("justification", "")
+            score_bar(s.get("name", "?"), s.get("total_score", 0), i + 1, detail)
+        print()
+
+    # ── Agent 4: Report Writer Results ──────────────────────────
+    report_path = state.get("report_path", "")
+    report_content = state.get("final_report", "")
+    report_rows = [
+        ("Status",         "Generated" if report_path else "Pending",  C.GREEN + C.BOLD if report_path else C.GREY),
+        ("File",           Path(report_path).name if report_path else "—", C.WHITE),
+        ("Size",           f"{len(report_content)} chars" if report_content else "—", C.GREY),
+    ]
+    agent_card("Agent 4 — Report Writer", "◆", C.MAGENTA, report_rows)
+
+    # ── Observability ────────────────────────────────────────────
+    logs = state.get("agent_logs", [])
+    log_path = flush_logs(logs)
+    agent_card("Observability", "◆", C.GREY, [
+        ("Log Entries",   str(len(logs)),          C.WHITE),
+        ("Trace File",    Path(log_path).name if log_path else "—", C.GREY),
+    ])
+
+
+def main():
+    Path("logs").mkdir(exist_ok=True)
+    Path("outputs").mkdir(exist_ok=True)
+
+    banner()
+    jd_text = load_jd()
+    final_state = run_pipeline(jd_text)
+    display_results(final_state)
+    complete()
 
 
 if __name__ == "__main__":

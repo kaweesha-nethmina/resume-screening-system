@@ -1,0 +1,55 @@
+Dr. Priya Rajagopal
+priya.rajagopal@techmail.com | +94 70 456 7890
+LinkedIn: linkedin.com/in/priyarajagopal
+
+EXECUTIVE SUMMARY
+Principal Software Architect with 14 years of experience leading large-scale
+distributed systems across fintech and e-commerce. Specialist in Python ecosystem,
+cloud-native architecture, and engineering leadership. Currently managing a team of
+18 engineers. Holds a PhD in Distributed Systems from NUS Singapore.
+
+CORE COMPETENCIES
+Architecture     : Microservices, Event-Driven (Kafka), CQRS, DDD, gRPC
+Languages        : Python 3.x, Go, Java, TypeScript
+Frameworks       : FastAPI, Django, Tornado, Celery, Pydantic
+Databases        : PostgreSQL, Cassandra, Redis, Elasticsearch, DynamoDB
+DevOps & Cloud   : Kubernetes (CKA certified), Terraform, AWS (10 services), GCP
+Observability    : Prometheus, Grafana, OpenTelemetry, Datadog
+Leadership       : Engineering Manager, Technical Interviewer, Conference Speaker
+
+PROFESSIONAL EXPERIENCE
+
+Principal Software Architect — Global Payments Corp, Remote (2019 – Present)
+  - Designed a real-time payment settlement platform handling $4B in daily volume
+  - Led architectural migration from monolith to event-driven microservices (Kafka)
+  - Built Python-based fraud detection engine with <15ms P99 latency
+  - Manages 18 engineers across 3 time zones; runs quarterly tech talks
+  - Introduced platform engineering team; reduced developer toil by 60%
+
+Lead Backend Engineer — Lazada Group, Singapore (2016 – 2019)
+  - Owned the Order Management System microservices (Python + PostgreSQL)
+  - Scaled APIs from 5k to 500k RPM during 11.11 sale event
+  - Architected Redis caching strategy saving $120k/year in RDS costs
+
+Senior Software Engineer — WSO2, Colombo (2013 – 2016)
+  - Built identity management APIs using Python and Java
+  - Open source contributor to WSO2 Identity Server
+
+Software Engineer — Virtusa, Colombo (2010 – 2013)
+  - Developed backend services for banking clients using Java and Python
+
+EDUCATION
+PhD, Distributed Systems — National University of Singapore (2016)
+BSc (Hons) Computer Science, First Class — University of Colombo (2010)
+
+CERTIFICATIONS
+- Certified Kubernetes Administrator (CKA) — 2023
+- AWS Solutions Architect Professional — 2022
+- Google Cloud Professional Data Engineer — 2021
+
+SPEAKING & PUBLICATIONS
+- PyCon APAC 2023 — "Scaling Python to $4B/day in Payments"
+- Author of 3 peer-reviewed papers on distributed consensus algorithms
+
+OPEN SOURCE
+- Maintainer of fastapi-audit-log (2.1k GitHub stars)
