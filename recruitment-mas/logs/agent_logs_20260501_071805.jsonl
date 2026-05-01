@@ -1,0 +1,2 @@
+{"timestamp": "2026-05-01T07:17:56.660439", "agent": "JDAnalyst", "event": "start", "data": {"jd_chars": 1858}}
+{"timestamp": "2026-05-01T07:18:05.008432", "agent": "JDAnalyst", "event": "complete", "data": {"skills_found": ["Python 3.10+", "FastAPI", "Django", "PostgreSQL", "Docker", "Git"]}}

@@ -15,7 +15,7 @@ def main():
     outputs_dir.mkdir(exist_ok=True)
 
     jd_path = Path("data/sample_jd.txt")
-    job_description = read_jd_file(str(jd_path))
+    job_description = read_jd_file.invoke({"file_path": str(jd_path)})
 
     pipeline = build_pipeline()
 
