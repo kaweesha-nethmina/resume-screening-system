@@ -38,6 +38,27 @@ def test_read_jd_file_empty(tmp_path):
         read_jd_file.invoke({"file_path": str(file)})
 
 
+# --- get_jd_from_user tool tests ---
+
+
+def test_get_jd_from_user_valid_input(monkeypatch):
+    """Tool returns content when user types valid text followed by END."""
+    responses = iter(["We need a Python developer.", "Required: Python, SQL.", "END"])
+    monkeypatch.setattr("builtins.input", lambda _: next(responses))
+    from tools.jd_tools import get_jd_from_user
+    result = get_jd_from_user.run("")
+    assert "Python" in result
+    assert len(result) > 0
+
+
+def test_get_jd_from_user_empty_raises(monkeypatch):
+    """Tool raises ValueError when user types END immediately with no content."""
+    monkeypatch.setattr("builtins.input", lambda _: "END")
+    from tools.jd_tools import get_jd_from_user
+    with pytest.raises(ValueError):
+        get_jd_from_user.run("")
+
+
 # --- Agent tests (require Ollama running with llama3:8b) ---
 
 

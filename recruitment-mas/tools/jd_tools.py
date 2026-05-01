@@ -57,3 +57,55 @@ def read_jd_file(file_path: str) -> str:
         raise ValueError(f"Job description file is empty: {path}")
 
     return stripped
+
+
+@tool
+def get_jd_from_user() -> str:
+    """Interactively collect a job description from the user via terminal input.
+
+    Prompts the user to paste or type a job description directly into the
+    terminal. Accepts multi-line input — the user types END on a new line
+    alone to finish. Validates the input is non-empty before returning.
+
+    Args:
+        None
+
+    Returns:
+        str: The full job description text entered by the user, stripped
+             of leading/trailing whitespace.
+
+    Raises:
+        ValueError: If the user submits empty or whitespace-only input.
+
+    Example:
+        >>> jd = get_jd_from_user()
+        Paste your job description below. Type END on a new line when done:
+        > We are hiring a Python developer...
+        > Required: Python, FastAPI
+        > END
+    """
+    print("\n" + "=" * 50)
+    print("PASTE YOUR JOB DESCRIPTION BELOW")
+    print("   Type or paste the JD, then type END on a")
+    print("   new line alone and press Enter to finish.")
+    print("=" * 50)
+
+    lines = []
+    while True:
+        try:
+            line = input("> ")
+        except EOFError:
+            break
+        if line.strip().upper() == "END":
+            break
+        lines.append(line)
+
+    content = "\n".join(lines).strip()
+
+    if not content:
+        raise ValueError(
+            "No job description entered. Please paste a valid JD and type END to finish."
+        )
+
+    logger.info("[Tool:get_jd_from_user] Collected %d chars from terminal input", len(content))
+    return content

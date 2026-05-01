@@ -6,6 +6,45 @@ from tools.jd_tools import read_jd_file
 from graph.pipeline import build_pipeline
 from utils.logger import flush_logs
 
+JD_PATH = "data/sample_jd.txt"
+
+
+def select_jd_input_mode() -> str:
+    """Ask the user how they want to provide the job description.
+
+    Returns:
+        str: The full job description text, from whichever source the user chose.
+    """
+    print("\n" + "=" * 50)
+    print("AI RESUME SCREENING MAS")
+    print("=" * 50)
+    print("\nHow would you like to provide the Job Description?\n")
+    print("  [1] Type or paste it now in the terminal")
+    print("  [2] Load from file  (default: data/sample_jd.txt)")
+    print("  [3] Load from a custom file path")
+    print()
+
+    choice = input("Enter choice (1 / 2 / 3): ").strip()
+
+    if choice == "1":
+        from tools.jd_tools import get_jd_from_user
+        jd_text = get_jd_from_user.run("")
+        print(f"\nJD collected - {len(jd_text)} characters")
+        return jd_text
+
+    elif choice == "3":
+        custom_path = input("Enter file path: ").strip()
+        from tools.jd_tools import read_jd_file
+        jd_text = read_jd_file.run(custom_path)
+        print(f"\nJD loaded from: {custom_path} - {len(jd_text)} characters")
+        return jd_text
+
+    else:
+        from tools.jd_tools import read_jd_file
+        jd_text = read_jd_file.run(JD_PATH)
+        print(f"\nJD loaded from: {JD_PATH} - {len(jd_text)} characters")
+        return jd_text
+
 
 def main():
     """Run the full resume screening pipeline."""
@@ -14,13 +53,12 @@ def main():
     logs_dir.mkdir(exist_ok=True)
     outputs_dir.mkdir(exist_ok=True)
 
-    jd_path = Path("data/sample_jd.txt")
-    job_description = read_jd_file.invoke({"file_path": str(jd_path)})
+    jd_text = select_jd_input_mode()
 
     pipeline = build_pipeline()
 
     initial_state = {
-        "job_description": job_description,
+        "job_description": jd_text,
         "cv_folder_path": str(Path("data/cvs")),
         "job_requirements": {},
         "cv_file_paths": [],
@@ -34,7 +72,7 @@ def main():
     }
 
     print("=== AI Resume Screening Pipeline ===\n")
-    print(f"Job Description loaded from: {jd_path}\n")
+    print(f"Job Description length: {len(jd_text)} characters\n")
 
     result = pipeline.invoke(initial_state)
 
