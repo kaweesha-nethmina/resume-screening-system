@@ -7,7 +7,7 @@ their scores, rankings, and recommended interview questions.
 import logging
 from datetime import datetime
 from langchain_ollama import ChatOllama
-from langchain.schema import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage, HumanMessage
 from state.schema import RecruitmentState
 from tools.report_tools import write_report_file
 from utils.logger import log_event, flush_logs

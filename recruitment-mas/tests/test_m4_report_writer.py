@@ -6,7 +6,7 @@ from pathlib import Path
 from tools.report_tools import write_report_file
 from agents.report_writer import report_writer_node
 from langchain_ollama import ChatOllama
-from langchain.schema import HumanMessage
+from langchain_core.messages import HumanMessage
 
 
 def test_write_report_creates_file(tmp_path):
