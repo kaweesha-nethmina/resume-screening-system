@@ -24,7 +24,7 @@ from utils.logger import log_event, flush_logs
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# System prompt — strict Markdown template enforced at prompt level
+# System prompt — strict template enforced at the prompt level
 # ---------------------------------------------------------------------------
 REPORT_SYSTEM = """You are a senior technical recruiter writing a report for a hiring manager.
 
@@ -33,9 +33,9 @@ STRICT RULES:
 2. Include ALL sections listed in the template below — do not skip any section.
 3. Be professional, objective, and concise.
 4. Do NOT invent information — use only the data provided in the user message.
-5. Interview questions must be specific, technical, and directly relevant to the role and candidate.
+5. Interview questions must be specific, technical, and directly relevant to the role.
 6. The ranked table must include every candidate — not just the top 3.
-7. Do NOT add preamble, commentary, or text outside the template structure.
+7. Do NOT add preamble or commentary outside the template structure.
 
 TEMPLATE:
 # Recruitment Report: {job_title}
@@ -47,7 +47,7 @@ _Generated: {date}_
 ## Ranked Shortlist
 | Rank | Name | Score | Key Strengths |
 |------|------|-------|---------------|
-(one table row per candidate, ordered by rank)
+(one row per candidate, ordered by rank)
 
 ## Top 3 Candidate Analysis
 
@@ -115,11 +115,11 @@ def _build_context(state: RecruitmentState) -> str:
     profiles = {p["name"]: p for p in state["candidate_profiles"]}
 
     lines = [
-        f"JOB TITLE      : {job.get('job_title', 'Unknown Role')}",
-        f"DOMAIN         : {job.get('domain', 'Not specified')}",
+        f"JOB TITLE     : {job.get('job_title', 'Unknown Role')}",
+        f"DOMAIN        : {job.get('domain', 'Not specified')}",
         f"REQUIRED SKILLS: {', '.join(job.get('required_skills', []))}",
         f"PREFERRED SKILLS: {', '.join(job.get('preferred_skills', []))}",
-        f"MIN EXPERIENCE : {job.get('min_experience_years', 0)} years",
+        f"MIN EXPERIENCE: {job.get('min_experience_years', 0)} years",
         "",
         "--- RANKED CANDIDATES ---",
     ]
@@ -131,7 +131,7 @@ def _build_context(state: RecruitmentState) -> str:
             f"#{rank}  {score['name']}"
             f" | Score: {score['total_score']}/100"
             f" | Skills: {skills_preview}"
-            f" | Experience: {profile.get('total_experience_years', '?')} yrs"
+            f" | Exp: {profile.get('total_experience_years', '?')} yrs"
             f" | Education: {profile.get('education', '?')}"
             f" | Justification: {score.get('justification', '')}"
         )
@@ -148,27 +148,24 @@ def report_writer_node(state: RecruitmentState) -> dict:
 
     Reads scores, candidate_profiles, and job_requirements from state.
     Invokes the LLM to generate a full Markdown recruitment report, saves
-    it to disk via write_report_file(), and flushes the observability trace.
+    it to disk, and flushes the observability log trace.
 
     Args:
-        state: RecruitmentState — reads:
-            - scores              : List of ranked scored candidates
-            - candidate_profiles  : List of structured candidate dicts
-            - job_requirements    : Structured JD dict
-            - agent_logs          : Accumulated observability log entries
+        state: RecruitmentState — reads scores, candidate_profiles,
+               job_requirements, agent_logs.
 
     Returns:
         dict: Partial state update containing:
             - final_report (str)  : Full Markdown report content.
-            - report_path (str)   : Absolute path of the saved .md file.
+            - report_path (str)   : Absolute path of the saved report file.
     """
     top_candidate = state["scores"][0]["name"] if state.get("scores") else "none"
     log_event(state, "ReportWriter", "start", {"top_candidate": top_candidate})
 
-    # ── Build prompt ──────────────────────────────────────────────────────
+    # Build prompt components
     job_title = state["job_requirements"].get("job_title", "Open Role")
-    date_str  = datetime.now().strftime("%Y-%m-%d %H:%M")
-    context   = _build_context(state)
+    date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    context = _build_context(state)
 
     system_prompt = (
         REPORT_SYSTEM
@@ -187,17 +184,13 @@ def report_writer_node(state: RecruitmentState) -> dict:
         ),
     ]
 
-    # ── Invoke LLM ────────────────────────────────────────────────────────
-    log_event(state, "ReportWriter", "tool_call", {
-        "tool": "ChatOllama",
-        "model": "llama3:8b",
-        "temperature": 0.3,
-    })
+    # Invoke LLM
+    log_event(state, "ReportWriter", "tool_call", {"tool": "ChatOllama", "model": "llama3:8b"})
     llm = ChatOllama(model="llama3:8b", temperature=0.3)
     response = llm.invoke(messages)
     report_md = response.content.strip()
 
-    # ── Save report to disk via custom tool ───────────────────────────────
+    # Save report to disk
     output_path = f"outputs/report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
     log_event(state, "ReportWriter", "tool_call", {
         "tool": "write_report_file",
@@ -208,14 +201,12 @@ def report_writer_node(state: RecruitmentState) -> dict:
         "output_path": output_path,
     })
 
-    # ── Flush all observability logs to JSONL ─────────────────────────────
+    # Flush all observability logs to JSONL
     log_event(state, "ReportWriter", "complete", {
         "path": saved_path,
         "chars": len(report_md),
-        "candidates_reported": len(state.get("scores", [])),
     })
     flush_logs(state.get("agent_logs", []))
 
     logger.info(f"[ReportWriter] Report saved to: {saved_path}")
-
     return {"final_report": report_md, "report_path": saved_path}
