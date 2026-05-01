@@ -1,0 +1,38 @@
+Job Title: Senior Python Backend Developer
+Department: Engineering
+Location: Remote / Hybrid
+Employment Type: Full-Time
+
+About the Role:
+We are seeking an experienced Senior Python Backend Developer to join our fintech engineering team. You will design, build, and maintain scalable backend services that power our financial products, serving thousands of transactions per second.
+
+Required Qualifications:
+- Programming: Python 3.10+ (strong proficiency)
+- Frameworks: FastAPI or Django (production experience required)
+- Databases: PostgreSQL (schema design, query optimization, indexing)
+- DevOps: Docker (containerization, multi-stage builds, Docker Compose)
+- Version Control: Git (branching strategies, code reviews, CI/CD pipelines)
+- Experience: 4+ years of professional backend development
+- Education: Bachelor's degree in Computer Science, Software Engineering, or related field (minimum)
+
+Nice-to-Have Qualifications:
+- Caching: Redis (distributed caching, message brokering)
+- Orchestration: Kubernetes (deployment, scaling, service mesh)
+- Cloud: AWS (EC2, S3, RDS, Lambda, CloudFormation or Terraform)
+- Experience in the fintech or payments industry
+- Familiarity with event-driven architecture and message queues (Kafka, RabbitMQ)
+- Knowledge of security best practices (OAuth2, JWT, encryption standards)
+
+Responsibilities:
+- Design and implement RESTful APIs and microservices
+- Write clean, well-tested, and documented code
+- Participate in code reviews and mentor junior developers
+- Collaborate with frontend engineers, product managers, and QA
+- Optimize system performance and ensure high availability
+- Contribute to architecture decisions and technical planning
+
+What We Offer:
+- Competitive salary and equity package
+- Flexible working hours and remote-first culture
+- Professional development budget
+- Health and wellness benefits
