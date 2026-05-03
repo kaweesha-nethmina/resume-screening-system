@@ -101,7 +101,7 @@ def test_empty_folder_raises(tmp_path):
         cv_screener_node(state)
 
 @given(st.text(min_size=10, max_size=500))
-@settings(max_examples=10)
+@settings(max_examples=10, deadline=None)
 def test_parse_single_cv_never_crashes(text):
     llm = ChatOllama(model="llama3:8b", temperature=0.0)
     result = _parse_single_cv(text, llm)
